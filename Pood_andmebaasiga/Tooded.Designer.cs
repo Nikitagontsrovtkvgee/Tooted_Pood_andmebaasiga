@@ -213,6 +213,7 @@
             this.Name = "Tooded";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Tooded";
+            this.Load += new System.EventHandler(this.Tooded_Load);
             ((System.ComponentModel.ISupportInitialize)(this.picPilt)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridTooted)).EndInit();
             this.ResumeLayout(false);
