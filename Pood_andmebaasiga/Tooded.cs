@@ -14,7 +14,7 @@ namespace Pood_andmebaasiga
 {
     public partial class Tooded : Form
     {
-        readonly SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Tooded.mdf;Integrated Security=True");
+        readonly SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\USERS\OPILANE\SOURCE\REPOS\TOOTED_POOD_ANDMEBAASIGA\POOD_ANDMEBAASIGA\TOOTED.MDF;Integrated Security=True");
         private void LaadiKategooriad()
         {
             // Avab ühenduse andmebaasiga

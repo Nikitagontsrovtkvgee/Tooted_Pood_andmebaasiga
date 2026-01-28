@@ -34,6 +34,8 @@
             this.lblSumma = new System.Windows.Forms.Label();
             this.btnLisaOstukorvi = new System.Windows.Forms.Button();
             this.btnMuu = new System.Windows.Forms.Button();
+            this.flpTooted = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnAvaKassa = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridKassa)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numKogus)).BeginInit();
             this.SuspendLayout();
@@ -98,11 +100,31 @@
             this.btnMuu.Text = "button2";
             this.btnMuu.UseVisualStyleBackColor = true;
             // 
+            // flpTooted
+            // 
+            this.flpTooted.AutoScroll = true;
+            this.flpTooted.Location = new System.Drawing.Point(522, 122);
+            this.flpTooted.Name = "flpTooted";
+            this.flpTooted.Size = new System.Drawing.Size(200, 100);
+            this.flpTooted.TabIndex = 6;
+            // 
+            // btnAvaKassa
+            // 
+            this.btnAvaKassa.Location = new System.Drawing.Point(560, 46);
+            this.btnAvaKassa.Name = "btnAvaKassa";
+            this.btnAvaKassa.Size = new System.Drawing.Size(75, 23);
+            this.btnAvaKassa.TabIndex = 17;
+            this.btnAvaKassa.Text = "button1";
+            this.btnAvaKassa.UseVisualStyleBackColor = true;
+            this.btnAvaKassa.Click += new System.EventHandler(this.btnAvaKassa_Click);
+            // 
             // Kassa
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnAvaKassa);
+            this.Controls.Add(this.flpTooted);
             this.Controls.Add(this.btnMuu);
             this.Controls.Add(this.btnLisaOstukorvi);
             this.Controls.Add(this.lblSumma);
@@ -126,5 +148,7 @@
         private System.Windows.Forms.Label lblSumma;
         private System.Windows.Forms.Button btnLisaOstukorvi;
         private System.Windows.Forms.Button btnMuu;
+        private System.Windows.Forms.FlowLayoutPanel flpTooted;
+        private System.Windows.Forms.Button btnAvaKassa;
     }
 }
