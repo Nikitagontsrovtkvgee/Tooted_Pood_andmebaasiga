@@ -14,7 +14,7 @@ namespace Pood_andmebaasiga
 {
     public partial class Login : Form
     {
-        readonly SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\USERS\OPILANE\SOURCE\REPOS\TOOTED_POOD_ANDMEBAASIGA\POOD_ANDMEBAASIGA\TOOTED.MDF;Integrated Security=True");
+        readonly SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\opilane\source\repos\Tooted_Pood_andmebaasiga\Pood_andmebaasiga\Tooded.mdf;Integrated Security=True");
         public Login()
         {
             InitializeComponent();

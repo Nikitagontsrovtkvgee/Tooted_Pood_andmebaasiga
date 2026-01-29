@@ -20,9 +20,13 @@ namespace Pood_andmebaasiga
         {
             InitializeComponent();
         }
+        private void Kassa_Load(object sender, EventArgs e)
+        {
+            LaadiKassaTooded();
+            TekitaVisuaalneKassa();
+        }
         // Ühendusstring (sama mis Tooded vormis)
-        readonly SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\USERS\OPILANE\SOURCE\REPOS\TOOTED_POOD_ANDMEBAASIGA\POOD_ANDMEBAASIGA\TOOTED.MDF;Integrated Security=True");
-        // Funktsioon toodete laadimiseks kassasse
+        readonly SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\opilane\source\repos\Tooted_Pood_andmebaasiga\Pood_andmebaasiga\Tooded.mdf;Integrated Security=True");        // Funktsioon toodete laadimiseks kassasse
         private void LaadiKassaTooded()
         {
             connect.Open();
