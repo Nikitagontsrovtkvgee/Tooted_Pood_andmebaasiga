@@ -9,7 +9,7 @@ namespace Pood_andmebaasiga
 {
     public partial class Tooded : Form
     {
-        SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\opilane\source\repos\Tooted_Pood_andmebaasiga\Pood_andmebaasiga\Tooded.mdf;Integrated Security=True");
+        SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Tooded.mdf;Integrated Security=True");
         string kasutajaRoll;
 
         public Tooded(string roll)
@@ -32,11 +32,11 @@ namespace Pood_andmebaasiga
         private void LaadiKategooriad()
         {
             connect.Open();
-            SqlDataAdapter da = new SqlDataAdapter("SELECT Id, Nimetus FROM Kategooriad", connect);
+            SqlDataAdapter da = new SqlDataAdapter("SELECT Id, Kategooria_nimetus FROM Kategooria", connect);
             DataTable dt = new DataTable();
             da.Fill(dt);
             cmbKategooria.DataSource = dt;
-            cmbKategooria.DisplayMember = "Nimetus";
+            cmbKategooria.DisplayMember = "Kategooria_nimetus";
             cmbKategooria.ValueMember = "Id";
             connect.Close();
         }
@@ -44,7 +44,7 @@ namespace Pood_andmebaasiga
         private void LaadiTooted()
         {
             connect.Open();
-            SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Tooted", connect);
+            SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Tooded", connect);
             DataTable dt = new DataTable();
             da.Fill(dt);
             dataGridTooted.DataSource = dt;
@@ -86,14 +86,23 @@ namespace Pood_andmebaasiga
         private void btnOtsiPilt_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Images|*.jpg;*.png;*.bmp"; // Ограничиваем типы файлов
+
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    picPilt.Image = Image.FromFile(ofd.FileName);
+                    // Используем поток, чтобы "отпустить" файл и не забивать память
+                    using (var stream = new System.IO.FileStream(ofd.FileName, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+                    {
+                        picPilt.Image = Image.FromStream(stream);
+                    }
                     picPilt.ImageLocation = ofd.FileName;
                 }
-                catch (Exception) { MessageBox.Show("Pildi viga"); }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка при загрузке изображения: " + ex.Message);
+                }
             }
         }
 
@@ -133,8 +142,8 @@ namespace Pood_andmebaasiga
             {
                 connect.Open();
                 SqlCommand cmd = new SqlCommand("INSERT INTO Kategooriad(Nimetus) VALUES(@n)", connect);
-                cmd.Parameters.AddWithValue("@n", nimi);
-                cmd.ExecuteNonQuery();
+                cmd.CommandText = "INSERT INTO Kategooria(Kategooria_nimetus) VALUES(@kat)";
+                cmd.Parameters.AddWithValue("@kat", nimi);
                 connect.Close();
                 LaadiKategooriad();
             }

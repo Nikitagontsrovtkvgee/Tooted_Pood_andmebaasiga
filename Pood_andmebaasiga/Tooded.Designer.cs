@@ -79,13 +79,13 @@
             this.btnUuenda.Location = new System.Drawing.Point(686, 188);
             this.btnUuenda.Name = "btnUuenda";
             this.btnUuenda.Text = "Uuenda";
-            this.btnUuenda.Click += new System.EventHandler(this.btnUuenda_Click);
+            //this.btnUuenda.Click += new System.EventHandler(this.btnUuenda_Click);
             // 
             // btnKustuta
             this.btnKustuta.Location = new System.Drawing.Point(767, 188);
             this.btnKustuta.Name = "btnKustuta";
             this.btnKustuta.Text = "Kustuta";
-            this.btnKustuta.Click += new System.EventHandler(this.btnKustuta_Click);
+            //this.btnKustuta.Click += new System.EventHandler(this.btnKustuta_Click);
             // 
             // btnOtsiFail
             this.btnOtsiFail.Location = new System.Drawing.Point(845, 270);
@@ -103,7 +103,7 @@
             this.btnKustutaKategooria.Location = new System.Drawing.Point(24, 118);
             this.btnKustutaKategooria.Name = "btnKustutaKategooria";
             this.btnKustutaKategooria.Text = "Kustuta kat.";
-            this.btnKustutaKategooria.Click += new System.EventHandler(this.btnKustutaKategooria_Click);
+            //this.btnKustutaKategooria.Click += new System.EventHandler(this.btnKustutaKategooria_Click);
             // 
             // Tooded
             // 
