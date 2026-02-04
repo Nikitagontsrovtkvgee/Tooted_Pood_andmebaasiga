@@ -13,8 +13,6 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
-
         private void InitializeComponent()
         {
             this.txtNimetus = new System.Windows.Forms.TextBox();
@@ -34,27 +32,32 @@
             this.SuspendLayout();
             // 
             // txtNimetus
-            this.txtNimetus.Location = new System.Drawing.Point(177, 188);
+            // 
+            this.txtNimetus.Location = new System.Drawing.Point(182, 188);
             this.txtNimetus.Name = "txtNimetus";
-            this.txtNimetus.Size = new System.Drawing.Size(100, 20);
+            this.txtNimetus.Size = new System.Drawing.Size(85, 20);
             // 
             // txtKogus
-            this.txtKogus.Location = new System.Drawing.Point(319, 188);
+            // 
+            this.txtKogus.Location = new System.Drawing.Point(273, 188);
             this.txtKogus.Name = "txtKogus";
-            this.txtKogus.Size = new System.Drawing.Size(100, 20);
+            this.txtKogus.Size = new System.Drawing.Size(85, 20);
             // 
             // txtHind
-            this.txtHind.Location = new System.Drawing.Point(458, 188);
+            // 
+            this.txtHind.Location = new System.Drawing.Point(364, 188);
             this.txtHind.Name = "txtHind";
-            this.txtHind.Size = new System.Drawing.Size(100, 20);
+            this.txtHind.Size = new System.Drawing.Size(85, 20);
             // 
             // cmbKategooria
+            // 
             this.cmbKategooria.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbKategooria.Location = new System.Drawing.Point(129, 80);
             this.cmbKategooria.Name = "cmbKategooria";
             this.cmbKategooria.Size = new System.Drawing.Size(121, 21);
             // 
             // picPilt
+            // 
             this.picPilt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picPilt.Location = new System.Drawing.Point(671, 270);
             this.picPilt.Name = "picPilt";
@@ -62,6 +65,7 @@
             this.picPilt.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             // 
             // dataGridTooted
+            // 
             this.dataGridTooted.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridTooted.Location = new System.Drawing.Point(36, 229);
             this.dataGridTooted.Name = "dataGridTooted";
@@ -70,40 +74,52 @@
             this.dataGridTooted.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridTooted_CellClick);
             // 
             // btnLisa
+            // 
             this.btnLisa.Location = new System.Drawing.Point(605, 188);
             this.btnLisa.Name = "btnLisa";
+            this.btnLisa.Size = new System.Drawing.Size(75, 23);
             this.btnLisa.Text = "Lisa";
             this.btnLisa.Click += new System.EventHandler(this.btnLisa_Click);
             // 
             // btnUuenda
+            // 
             this.btnUuenda.Location = new System.Drawing.Point(686, 188);
             this.btnUuenda.Name = "btnUuenda";
+            this.btnUuenda.Size = new System.Drawing.Size(75, 23);
             this.btnUuenda.Text = "Uuenda";
-            //this.btnUuenda.Click += new System.EventHandler(this.btnUuenda_Click);
+            this.btnUuenda.Click += new System.EventHandler(this.btnUuenda_Click);
             // 
             // btnKustuta
+            // 
             this.btnKustuta.Location = new System.Drawing.Point(767, 188);
             this.btnKustuta.Name = "btnKustuta";
+            this.btnKustuta.Size = new System.Drawing.Size(75, 23);
             this.btnKustuta.Text = "Kustuta";
-            //this.btnKustuta.Click += new System.EventHandler(this.btnKustuta_Click);
+            this.btnKustuta.Click += new System.EventHandler(this.btnKustuta_Click);
             // 
             // btnOtsiFail
+            // 
             this.btnOtsiFail.Location = new System.Drawing.Point(845, 270);
             this.btnOtsiFail.Name = "btnOtsiFail";
+            this.btnOtsiFail.Size = new System.Drawing.Size(75, 23);
             this.btnOtsiFail.Text = "Otsi pilt";
             this.btnOtsiFail.Click += new System.EventHandler(this.btnOtsiPilt_Click);
             // 
             // btnLisaKategooria
+            // 
             this.btnLisaKategooria.Location = new System.Drawing.Point(24, 78);
             this.btnLisaKategooria.Name = "btnLisaKategooria";
+            this.btnLisaKategooria.Size = new System.Drawing.Size(75, 23);
             this.btnLisaKategooria.Text = "Lisa kat.";
             this.btnLisaKategooria.Click += new System.EventHandler(this.btnLisaKategooria_Click);
             // 
             // btnKustutaKategooria
+            // 
             this.btnKustutaKategooria.Location = new System.Drawing.Point(24, 118);
             this.btnKustutaKategooria.Name = "btnKustutaKategooria";
+            this.btnKustutaKategooria.Size = new System.Drawing.Size(75, 23);
             this.btnKustutaKategooria.Text = "Kustuta kat.";
-            //this.btnKustutaKategooria.Click += new System.EventHandler(this.btnKustutaKategooria_Click);
+            this.btnKustutaKategooria.Click += new System.EventHandler(this.btnKustutaKategooria_Click);
             // 
             // Tooded
             // 
@@ -130,8 +146,6 @@
             this.ResumeLayout(false);
             this.PerformLayout();
         }
-
-        #endregion
 
         private System.Windows.Forms.TextBox txtNimetus;
         private System.Windows.Forms.TextBox txtKogus;

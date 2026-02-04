@@ -26,29 +26,38 @@ namespace Pood_andmebaasiga
         private void Tooded_Load(object sender, EventArgs e)
         {
             LaadiKategooriad();
-            LaadiTooted();
+            LaadiTooded();
         }
 
         private void LaadiKategooriad()
         {
-            connect.Open();
-            SqlDataAdapter da = new SqlDataAdapter("SELECT Id, Kategooria_nimetus FROM Kategooria", connect);
-            DataTable dt = new DataTable();
-            da.Fill(dt);
-            cmbKategooria.DataSource = dt;
-            cmbKategooria.DisplayMember = "Kategooria_nimetus";
-            cmbKategooria.ValueMember = "Id";
-            connect.Close();
+            try
+            {
+                connect.Open();
+                SqlDataAdapter da = new SqlDataAdapter("SELECT Id, Kategooria_nimetus FROM Kategooria", connect);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                cmbKategooria.DataSource = null; // Очистка дублей
+                cmbKategooria.DataSource = dt;
+                cmbKategooria.DisplayMember = "Kategooria_nimetus";
+                cmbKategooria.ValueMember = "Id";
+            }
+            catch (Exception ex) { MessageBox.Show("Viga: " + ex.Message); }
+            finally { connect.Close(); }
         }
 
-        private void LaadiTooted()
+        private void LaadiTooded()
         {
-            connect.Open();
-            SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Tooded", connect);
-            DataTable dt = new DataTable();
-            da.Fill(dt);
-            dataGridTooted.DataSource = dt;
-            connect.Close();
+            try
+            {
+                connect.Open();
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Tooded", connect);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dataGridTooted.DataSource = dt;
+            }
+            catch (Exception ex) { MessageBox.Show("Viga: " + ex.Message); }
+            finally { connect.Close(); }
         }
 
         private void btnLisa_Click(object sender, EventArgs e)
@@ -58,16 +67,19 @@ namespace Pood_andmebaasiga
                 try
                 {
                     connect.Open();
-                    SqlCommand cmd = new SqlCommand("INSERT INTO Tooted(Toodenimetus, Kogus, Hind, Pilt) VALUES(@n, @k, @h, @p)", connect);
+                    // Исправлено: добавлены все нужные параметры и правильное имя таблицы Tooded
+                    SqlCommand cmd = new SqlCommand("INSERT INTO Tooded(Toodenimetus, Kogus, Hind, Pilt, Kategooriad_ID) VALUES(@n, @k, @h, @p, @kat)", connect);
                     cmd.Parameters.AddWithValue("@n", txtNimetus.Text);
                     cmd.Parameters.AddWithValue("@k", int.Parse(txtKogus.Text));
                     cmd.Parameters.AddWithValue("@h", decimal.Parse(txtHind.Text.Replace('.', ',')));
                     cmd.Parameters.AddWithValue("@p", Path.GetFileName(picPilt.ImageLocation) ?? "noimage.png");
+                    cmd.Parameters.AddWithValue("@kat", cmbKategooria.SelectedValue ?? DBNull.Value);
+
                     cmd.ExecuteNonQuery();
                     connect.Close();
-                    LaadiTooted();
+                    LaadiTooded();
                 }
-                catch (Exception ex) { MessageBox.Show("Viga: " + ex.Message); connect.Close(); }
+                catch (Exception ex) { MessageBox.Show("Viga добавления: " + ex.Message); connect.Close(); }
             }
         }
 
@@ -79,30 +91,21 @@ namespace Pood_andmebaasiga
                 txtNimetus.Text = r.Cells["Toodenimetus"].Value.ToString();
                 txtKogus.Text = r.Cells["Kogus"].Value.ToString();
                 txtHind.Text = r.Cells["Hind"].Value.ToString();
-                // Так как Kategooria_Id нет, просто обнуляем выбор или оставляем как есть
+                if (r.Cells["Kategooriad_ID"].Value != DBNull.Value)
+                {
+                    cmbKategooria.SelectedValue = r.Cells["Kategooriad_ID"].Value;
+                }
             }
         }
 
         private void btnOtsiPilt_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Images|*.jpg;*.png;*.bmp"; // Ограничиваем типы файлов
-
+            ofd.Filter = "Images|*.jpg;*.png;*.bmp";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                try
-                {
-                    // Используем поток, чтобы "отпустить" файл и не забивать память
-                    using (var stream = new System.IO.FileStream(ofd.FileName, System.IO.FileMode.Open, System.IO.FileAccess.Read))
-                    {
-                        picPilt.Image = Image.FromStream(stream);
-                    }
-                    picPilt.ImageLocation = ofd.FileName;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Ошибка при загрузке изображения: " + ex.Message);
-                }
+                picPilt.Image = Image.FromFile(ofd.FileName);
+                picPilt.ImageLocation = ofd.FileName;
             }
         }
 
@@ -110,42 +113,58 @@ namespace Pood_andmebaasiga
         {
             if (dataGridTooted.CurrentRow != null)
             {
-                connect.Open();
-                SqlCommand cmd = new SqlCommand("UPDATE Tooted SET Toodenimetus=@n, Kogus=@k, Hind=@h WHERE Id=@id", connect);
-                cmd.Parameters.AddWithValue("@n", txtNimetus.Text);
-                cmd.Parameters.AddWithValue("@k", txtKogus.Text);
-                cmd.Parameters.AddWithValue("@h", txtHind.Text.Replace('.', ','));
-                cmd.Parameters.AddWithValue("@id", dataGridTooted.CurrentRow.Cells["Id"].Value);
-                cmd.ExecuteNonQuery();
-                connect.Close();
-                LaadiTooted();
+                try
+                {
+                    connect.Open();
+                    // Исправлено: добавлен @kat, которого не хватало на твоем скриншоте
+                    SqlCommand cmd = new SqlCommand("UPDATE Tooded SET Toodenimetus=@n, Kogus=@k, Hind=@h, Pilt=@p, Kategooriad_ID=@kat WHERE Id=@id", connect);
+                    cmd.Parameters.AddWithValue("@n", txtNimetus.Text);
+                    cmd.Parameters.AddWithValue("@k", txtKogus.Text);
+                    cmd.Parameters.AddWithValue("@h", txtHind.Text.Replace('.', ','));
+                    cmd.Parameters.AddWithValue("@p", Path.GetFileName(picPilt.ImageLocation) ?? "noimage.png");
+                    cmd.Parameters.AddWithValue("@kat", cmbKategooria.SelectedValue ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@id", dataGridTooted.CurrentRow.Cells["Id"].Value);
+
+                    cmd.ExecuteNonQuery();
+                    connect.Close();
+                    LaadiTooded();
+                }
+                catch (Exception ex) { MessageBox.Show("Viga обновления: " + ex.Message); connect.Close(); }
             }
         }
 
         private void btnKustuta_Click(object sender, EventArgs e)
         {
-            if (dataGridTooted.CurrentRow != null)
+            if (dataGridTooted.SelectedRows.Count > 0)
             {
-                connect.Open();
-                SqlCommand cmd = new SqlCommand("DELETE FROM Tooted WHERE Id=@id", connect);
-                cmd.Parameters.AddWithValue("@id", dataGridTooted.CurrentRow.Cells["Id"].Value);
-                cmd.ExecuteNonQuery();
-                connect.Close();
-                LaadiTooted();
+                try
+                {
+                    connect.Open();
+                    SqlCommand cmd = new SqlCommand("DELETE FROM Tooded WHERE Id=@id", connect);
+                    cmd.Parameters.AddWithValue("@id", dataGridTooted.SelectedRows[0].Cells["Id"].Value);
+                    cmd.ExecuteNonQuery();
+                    connect.Close();
+                    LaadiTooded();
+                }
+                catch (Exception ex) { MessageBox.Show("Viga удаления: " + ex.Message); connect.Close(); }
             }
         }
 
         private void btnLisaKategooria_Click(object sender, EventArgs e)
         {
             string nimi = Microsoft.VisualBasic.Interaction.InputBox("Sisesta kategooria nimi", "Uus");
-            if (nimi != "")
+            if (!string.IsNullOrWhiteSpace(nimi))
             {
-                connect.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO Kategooriad(Nimetus) VALUES(@n)", connect);
-                cmd.CommandText = "INSERT INTO Kategooria(Kategooria_nimetus) VALUES(@kat)";
-                cmd.Parameters.AddWithValue("@kat", nimi);
-                connect.Close();
-                LaadiKategooriad();
+                try
+                {
+                    connect.Open();
+                    SqlCommand cmd = new SqlCommand("INSERT INTO Kategooria(Kategooria_nimetus) VALUES(@kat)", connect);
+                    cmd.Parameters.AddWithValue("@kat", nimi);
+                    cmd.ExecuteNonQuery();
+                    connect.Close();
+                    LaadiKategooriad();
+                }
+                catch (Exception ex) { MessageBox.Show("Viga категории: " + ex.Message); connect.Close(); }
             }
         }
 
@@ -153,12 +172,16 @@ namespace Pood_andmebaasiga
         {
             if (cmbKategooria.SelectedValue != null)
             {
-                connect.Open();
-                SqlCommand cmd = new SqlCommand("DELETE FROM Kategooriad WHERE Id=@id", connect);
-                cmd.Parameters.AddWithValue("@id", cmbKategooria.SelectedValue);
-                cmd.ExecuteNonQuery();
-                connect.Close();
-                LaadiKategooriad();
+                try
+                {
+                    connect.Open();
+                    SqlCommand cmd = new SqlCommand("DELETE FROM Kategooria WHERE Id=@id", connect);
+                    cmd.Parameters.AddWithValue("@id", cmbKategooria.SelectedValue);
+                    cmd.ExecuteNonQuery();
+                    connect.Close();
+                    LaadiKategooriad();
+                }
+                catch (Exception ex) { MessageBox.Show("Viga удаления категории: " + ex.Message); connect.Close(); }
             }
         }
     }

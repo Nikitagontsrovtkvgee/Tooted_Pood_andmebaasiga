@@ -1,43 +1,44 @@
-﻿using iTextSharp.text;
-using iTextSharp.text.pdf;
+﻿using iTextSharp.text; // Для PDF
+using iTextSharp.text.pdf; // Для PDF
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+// System.Drawing не пишем в using, если используем полные пути, чтобы не было конфликтов с iTextSharp
 
 namespace Pood_andmebaasiga
 {
     public partial class Kassa : Form
     {
+        // Используем |DataDirectory|, чтобы база работала на любом ПК
+        readonly SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Tooded.mdf;Integrated Security=True");
+
         public Kassa()
         {
             InitializeComponent();
         }
+
         private void Kassa_Load(object sender, EventArgs e)
         {
             LaadiKassaTooded();
             TekitaVisuaalneKassa();
         }
-        // Ühendusstring (sama mis Tooded vormis)
-        readonly SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\opilane\source\repos\Tooted_Pood_andmebaasiga\Pood_andmebaasiga\Tooded.mdf;Integrated Security=True");        // Funktsioon toodete laadimiseks kassasse
+
         private void LaadiKassaTooded()
         {
-            connect.Open();
-            SqlDataAdapter da = new SqlDataAdapter("SELECT Id, Toodenimetus, Kogus, Hind FROM Tooted", connect);
-            DataTable dt = new DataTable();
-            da.Fill(dt);
-            connect.Close();
-            dataGridKassa.DataSource = dt;
+            try
+            {
+                connect.Open();
+                SqlDataAdapter da = new SqlDataAdapter("SELECT Id, Toodenimetus, Kogus, Hind FROM Tooted", connect);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                dataGridKassa.DataSource = dt;
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            finally { connect.Close(); }
         }
 
-        // Ostu sooritamine ja andmebaasi uuendamine
         private void btnMuu_Click(object sender, EventArgs e)
         {
             if (dataGridKassa.CurrentRow == null) return;
@@ -46,24 +47,26 @@ namespace Pood_andmebaasiga
             int laos = Convert.ToInt32(dataGridKassa.CurrentRow.Cells["Kogus"].Value);
             int soovitud = (int)numKogus.Value;
 
-            if (soovitud > laos)
+            if (soovitud <= 0) { MessageBox.Show("Vali kogus!"); return; }
+            if (soovitud > laos) { MessageBox.Show("Ei ole piisavalt kaupa laos!"); return; }
+
+            try
             {
-                MessageBox.Show("Ei ole piisavalt kaupa laos!");
-                return;
+                connect.Open();
+                SqlCommand cmd = new SqlCommand("UPDATE Tooted SET Kogus = Kogus - @kogus WHERE Id = @id", connect);
+                cmd.Parameters.AddWithValue("@kogus", soovitud);
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.ExecuteNonQuery();
+                connect.Close();
+
+                LooTsekk();
+                LaadiKassaTooded();
+                TekitaVisuaalneKassa(); // Обновляем картинки, если товар кончился
+                MessageBox.Show("Ost sooritatud!");
             }
-
-            // Vähendame kogust andmebaasis
-            connect.Open();
-            SqlCommand cmd = new SqlCommand("UPDATE Tooted SET Kogus = Kogus - @kogus WHERE Id = @id", connect);
-            cmd.Parameters.AddWithValue("@kogus", soovitud);
-            cmd.Parameters.AddWithValue("@id", id);
-            cmd.ExecuteNonQuery();
-            connect.Close();
-
-            LooTsekk(); // Kutsume tšeki loomise funktsiooni
-            LaadiKassaTooded(); // Uuendame tabelit
-            MessageBox.Show("Ost sooritatud!");
+            catch (Exception ex) { MessageBox.Show(ex.Message); connect.Close(); }
         }
+
         private void LooTsekk()
         {
             string kataloog = Path.Combine(Application.StartupPath, "Arved");
@@ -80,67 +83,83 @@ namespace Pood_andmebaasiga
             doc.Add(new Paragraph("----------------------------"));
             doc.Add(new Paragraph($"Toode: {dataGridKassa.CurrentRow.Cells["Toodenimetus"].Value}"));
             doc.Add(new Paragraph($"Kogus: {numKogus.Value}"));
-            doc.Add(new Paragraph($"Summa: {Convert.ToDouble(dataGridKassa.CurrentRow.Cells["Hind"].Value) * (double)numKogus.Value} EUR"));
+
+            double hind = Convert.ToDouble(dataGridKassa.CurrentRow.Cells["Hind"].Value);
+            double summa = hind * (double)numKogus.Value;
+
+            doc.Add(new Paragraph($"Summa: {summa:F2} EUR"));
             doc.Close();
         }
+
         private void TekitaVisuaalneKassa()
         {
             flpTooted.Controls.Clear();
-            connect.Open();
-            SqlCommand cmd = new SqlCommand("SELECT Id, Toodenimetus, Hind, Pilt FROM Tooted WHERE Kogus > 0", connect);
-            SqlDataReader dr = cmd.ExecuteReader();
-
-            while (dr.Read())
+            try
             {
-                GroupBox box = new GroupBox { Size = new System.Drawing.Size(150, 200), Text = dr["Toodenimetus"].ToString() };
+                connect.Open();
+                SqlCommand cmd = new SqlCommand("SELECT Id, Toodenimetus, Hind, Pilt FROM Tooted WHERE Kogus > 0", connect);
+                SqlDataReader dr = cmd.ExecuteReader();
 
-                PictureBox pic = new PictureBox
+                while (dr.Read())
                 {
-                    Size = new System.Drawing.Size(130, 100),
-                    Location = new System.Drawing.Point(10, 20),
-                    SizeMode = PictureBoxSizeMode.Zoom
-                };
+                    GroupBox box = new GroupBox { Size = new System.Drawing.Size(150, 200), Text = dr["Toodenimetus"].ToString() };
 
-                string pildiNimi = dr["Pilt"].ToString();
-                string tee = Path.Combine(Application.StartupPath, "Images", pildiNimi);
+                    PictureBox pic = new PictureBox
+                    {
+                        Size = new System.Drawing.Size(130, 100),
+                        Location = new System.Drawing.Point(10, 20),
+                        SizeMode = PictureBoxSizeMode.Zoom
+                    };
 
-                if (File.Exists(tee))
-                {
-                    // Используем полное имя, чтобы избежать CS0104
-                    pic.Image = System.Drawing.Image.FromFile(tee);
+                    string pildiNimi = dr["Pilt"].ToString();
+                    // Путь к папке bin/Debug/Images
+                    string tee = Path.Combine(Application.StartupPath, "Images", pildiNimi);
+
+                    if (File.Exists(tee))
+                    {
+                        pic.Image = System.Drawing.Image.FromFile(tee);
+                    }
+
+                    System.Windows.Forms.Label lbl = new System.Windows.Forms.Label
+                    {
+                        Text = dr["Hind"].ToString() + " €",
+                        Location = new System.Drawing.Point(10, 130),
+                        Font = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Bold)
+                    };
+
+                    System.Windows.Forms.Button btn = new System.Windows.Forms.Button
+                    {
+                        Text = "Vali",
+                        Location = new System.Drawing.Point(10, 160),
+                        Tag = dr["Id"]
+                    };
+                    btn.Click += OstuNupu_Click;
+
+                    box.Controls.Add(pic);
+                    box.Controls.Add(lbl);
+                    box.Controls.Add(btn);
+                    flpTooted.Controls.Add(box);
                 }
-
-                Label lbl = new Label
-                {
-                    Text = dr["Hind"].ToString() + " €",
-                    Location = new System.Drawing.Point(10, 130),
-                    // Снова полное имя для шрифта
-                    Font = new System.Drawing.Font(this.Font, System.Drawing.FontStyle.Bold)
-                };
-
-                Button btn = new Button { Text = "Lisa", Location = new System.Drawing.Point(10, 160), Tag = dr["Id"] };
-                btn.Click += OstuNupu_Click;
-
-                box.Controls.Add(pic);
-                box.Controls.Add(lbl);
-                box.Controls.Add(btn);
-                flpTooted.Controls.Add(box);
             }
-            connect.Close();
+            catch (Exception ex) { MessageBox.Show("Viga piltide laadimisel: " + ex.Message); }
+            finally { connect.Close(); }
         }
+
         private void OstuNupu_Click(object sender, EventArgs e)
         {
-            Button btn = (Button)sender;
+            System.Windows.Forms.Button btn = (System.Windows.Forms.Button)sender;
             int tooteId = (int)btn.Tag;
 
-            // Siin võid lisada loogika, mis lisab toote ostukorvi (listOstukorv)
-            MessageBox.Show("Toode ID-ga " + tooteId + " lisatud ostukorvi!");
-        }
-
-        private void btnAvaKassa_Click(object sender, EventArgs e)
-        {
-            Kassa kassaVorm = new Kassa();
-            kassaVorm.Show();
+            // Автоматически выбираем этот товар в DataGridView
+            foreach (DataGridViewRow row in dataGridKassa.Rows)
+            {
+                if (Convert.ToInt32(row.Cells["Id"].Value) == tooteId)
+                {
+                    row.Selected = true;
+                    dataGridKassa.CurrentCell = row.Cells[0];
+                    break;
+                }
+            }
         }
     }
 }
