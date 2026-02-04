@@ -149,7 +149,7 @@ namespace Pood_andmebaasiga
         {
             System.Windows.Forms.Button btn = (System.Windows.Forms.Button)sender;
             int tooteId = (int)btn.Tag;
-
+             
             // Автоматически выбираем этот товар в DataGridView
             foreach (DataGridViewRow row in dataGridKassa.Rows)
             {
