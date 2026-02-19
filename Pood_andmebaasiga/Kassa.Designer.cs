@@ -1,4 +1,4 @@
-﻿namespace Pood_andmebaasiga
+namespace Pood_andmebaasiga
 {
     partial class Kassa
     {
