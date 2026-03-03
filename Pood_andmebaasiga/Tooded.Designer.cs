@@ -3,7 +3,15 @@ namespace Pood_andmebaasiga
     partial class Tooded
     {
         private System.ComponentModel.IContainer components = null;
-        protected override void Dispose(bool disposing) { if (disposing && (components != null)) components.Dispose(); base.Dispose(disposing); }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
         private void InitializeComponent()
         {
@@ -18,44 +26,150 @@ namespace Pood_andmebaasiga
             this.txtHind = new System.Windows.Forms.TextBox();
             this.txtUusKat = new System.Windows.Forms.TextBox();
             this.cmbKategooria = new System.Windows.Forms.ComboBox();
+            this.picPilt = new System.Windows.Forms.PictureBox();
+            this.btnOtsiPilt = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTooded)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picPilt)).BeginInit();
             this.SuspendLayout();
-
+            // 
+            // dataGridViewTooded
+            // 
+            this.dataGridViewTooded.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewTooded.Location = new System.Drawing.Point(12, 12);
-            this.dataGridViewTooded.Size = new System.Drawing.Size(600, 180);
+            this.dataGridViewTooded.Name = "dataGridViewTooded";
             this.dataGridViewTooded.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridViewTooded.Size = new System.Drawing.Size(703, 180);
+            this.dataGridViewTooded.TabIndex = 0;
             this.dataGridViewTooded.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewTooded_CellClick);
-
-            this.btnLisa.Location = new System.Drawing.Point(180, 210); this.btnLisa.Text = "Lisa Toode";
+            // 
+            // btnLisa
+            // 
+            this.btnLisa.Location = new System.Drawing.Point(180, 210);
+            this.btnLisa.Name = "btnLisa";
+            this.btnLisa.Size = new System.Drawing.Size(75, 23);
+            this.btnLisa.TabIndex = 1;
+            this.btnLisa.Text = "Lisa Toode";
+            this.btnLisa.UseVisualStyleBackColor = true;
             this.btnLisa.Click += new System.EventHandler(this.btnLisa_Click);
-
-            this.btnUuenda.Location = new System.Drawing.Point(180, 240); this.btnUuenda.Text = "Uuenda";
+            // 
+            // btnUuenda
+            // 
+            this.btnUuenda.Location = new System.Drawing.Point(180, 240);
+            this.btnUuenda.Name = "btnUuenda";
+            this.btnUuenda.Size = new System.Drawing.Size(75, 23);
+            this.btnUuenda.TabIndex = 2;
+            this.btnUuenda.Text = "Uuenda";
+            this.btnUuenda.UseVisualStyleBackColor = true;
             this.btnUuenda.Click += new System.EventHandler(this.btnUuenda_Click);
-
-            this.btnKustuta.Location = new System.Drawing.Point(180, 270); this.btnKustuta.Text = "Kustuta";
+            // 
+            // btnKustuta
+            // 
+            this.btnKustuta.Location = new System.Drawing.Point(180, 270);
+            this.btnKustuta.Name = "btnKustuta";
+            this.btnKustuta.Size = new System.Drawing.Size(75, 23);
+            this.btnKustuta.TabIndex = 3;
+            this.btnKustuta.Text = "Kustuta";
+            this.btnKustuta.UseVisualStyleBackColor = true;
             this.btnKustuta.Click += new System.EventHandler(this.btnKustuta_Click);
-
-            this.btnAvaKassa.Location = new System.Drawing.Point(500, 350); this.btnAvaKassa.Text = "Kassasse";
+            // 
+            // btnAvaKassa
+            // 
+            this.btnAvaKassa.Location = new System.Drawing.Point(640, 470);
+            this.btnAvaKassa.Name = "btnAvaKassa";
+            this.btnAvaKassa.Size = new System.Drawing.Size(75, 23);
+            this.btnAvaKassa.TabIndex = 4;
+            this.btnAvaKassa.Text = "Kassasse";
+            this.btnAvaKassa.UseVisualStyleBackColor = true;
             this.btnAvaKassa.Click += new System.EventHandler(this.btnAvaKassa_Click);
-
-            this.txtNimetus.Location = new System.Drawing.Point(12, 210);
-            this.txtKogus.Location = new System.Drawing.Point(12, 240);
-            this.txtHind.Location = new System.Drawing.Point(12, 270);
-            this.cmbKategooria.Location = new System.Drawing.Point(12, 300);
-
-            this.txtUusKat.Location = new System.Drawing.Point(350, 210);
-            this.btnLisaKat.Location = new System.Drawing.Point(350, 240); this.btnLisaKat.Text = "Lisa Kategooria";
+            // 
+            // btnLisaKat
+            // 
+            this.btnLisaKat.Location = new System.Drawing.Point(350, 240);
+            this.btnLisaKat.Name = "btnLisaKat";
+            this.btnLisaKat.Size = new System.Drawing.Size(100, 23);
+            this.btnLisaKat.TabIndex = 5;
+            this.btnLisaKat.Text = "Lisa Kategooria";
+            this.btnLisaKat.UseVisualStyleBackColor = true;
             this.btnLisaKat.Click += new System.EventHandler(this.btnLisaKat_Click);
-
-            this.ClientSize = new System.Drawing.Size(630, 400);
-            this.Controls.AddRange(new System.Windows.Forms.Control[] {
-                this.dataGridViewTooded, this.btnLisa, this.btnUuenda, this.btnKustuta,
-                this.btnAvaKassa, this.btnLisaKat, this.txtNimetus, this.txtKogus,
-                this.txtHind, this.txtUusKat, this.cmbKategooria
-            });
+            // 
+            // txtNimetus
+            // 
+            this.txtNimetus.Location = new System.Drawing.Point(12, 210);
+            this.txtNimetus.Name = "txtNimetus";
+            this.txtNimetus.Size = new System.Drawing.Size(121, 20);
+            this.txtNimetus.TabIndex = 6;
+            // 
+            // txtKogus
+            // 
+            this.txtKogus.Location = new System.Drawing.Point(12, 240);
+            this.txtKogus.Name = "txtKogus";
+            this.txtKogus.Size = new System.Drawing.Size(121, 20);
+            this.txtKogus.TabIndex = 7;
+            // 
+            // txtHind
+            // 
+            this.txtHind.Location = new System.Drawing.Point(12, 270);
+            this.txtHind.Name = "txtHind";
+            this.txtHind.Size = new System.Drawing.Size(121, 20);
+            this.txtHind.TabIndex = 8;
+            // 
+            // txtUusKat
+            // 
+            this.txtUusKat.Location = new System.Drawing.Point(350, 210);
+            this.txtUusKat.Name = "txtUusKat";
+            this.txtUusKat.Size = new System.Drawing.Size(100, 20);
+            this.txtUusKat.TabIndex = 9;
+            // 
+            // cmbKategooria
+            // 
+            this.cmbKategooria.FormattingEnabled = true;
+            this.cmbKategooria.Location = new System.Drawing.Point(12, 300);
+            this.cmbKategooria.Name = "cmbKategooria";
+            this.cmbKategooria.Size = new System.Drawing.Size(121, 21);
+            this.cmbKategooria.TabIndex = 10;
+            // 
+            // picPilt
+            // 
+            this.picPilt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picPilt.Location = new System.Drawing.Point(473, 198);
+            this.picPilt.Name = "picPilt";
+            this.picPilt.Size = new System.Drawing.Size(242, 183);
+            this.picPilt.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picPilt.TabIndex = 11;
+            this.picPilt.TabStop = false;
+            // 
+            // btnOtsiPilt
+            // 
+            this.btnOtsiPilt.Location = new System.Drawing.Point(473, 387);
+            this.btnOtsiPilt.Name = "btnOtsiPilt";
+            this.btnOtsiPilt.Size = new System.Drawing.Size(75, 23);
+            this.btnOtsiPilt.TabIndex = 12;
+            this.btnOtsiPilt.Text = "Vali foto";
+            this.btnOtsiPilt.UseVisualStyleBackColor = true;
+            this.btnOtsiPilt.Click += new System.EventHandler(this.btnOtsiPilt_Click);
+            // 
+            // Tooded
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(727, 505);
+            this.Controls.Add(this.btnOtsiPilt);
+            this.Controls.Add(this.picPilt);
+            this.Controls.Add(this.dataGridViewTooded);
+            this.Controls.Add(this.btnLisa);
+            this.Controls.Add(this.btnUuenda);
+            this.Controls.Add(this.btnKustuta);
+            this.Controls.Add(this.btnAvaKassa);
+            this.Controls.Add(this.btnLisaKat);
+            this.Controls.Add(this.txtNimetus);
+            this.Controls.Add(this.txtKogus);
+            this.Controls.Add(this.txtHind);
+            this.Controls.Add(this.txtUusKat);
+            this.Controls.Add(this.cmbKategooria);
             this.Name = "Tooded";
-            this.Text = "Laohaldus - Full Fix";
+            this.Text = "LaoHaldus - Full Fix";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTooded)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picPilt)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
         }
@@ -64,5 +178,7 @@ namespace Pood_andmebaasiga
         private System.Windows.Forms.Button btnLisa, btnUuenda, btnKustuta, btnAvaKassa, btnLisaKat;
         private System.Windows.Forms.TextBox txtNimetus, txtKogus, txtHind, txtUusKat;
         private System.Windows.Forms.ComboBox cmbKategooria;
+        private System.Windows.Forms.PictureBox picPilt;
+        private System.Windows.Forms.Button btnOtsiPilt;
     }
 }

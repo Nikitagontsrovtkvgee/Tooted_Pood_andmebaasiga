@@ -9,14 +9,25 @@ namespace Pood_andmebaasiga
 {
     public partial class Tooded : Form
     {
-        // Проверь путь к базе, если он другой — поправь
+        // Оставляем только одно подключение
         SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Tooded.mdf;Integrated Security=True");
         string piltPath = "";
+        string kasutajaRoll = "";
 
+        // Конструктор
         public Tooded(string roll)
         {
             InitializeComponent();
+            this.kasutajaRoll = roll;
             RefreshEverything();
+
+            // Права доступа
+            if (kasutajaRoll != "Admin")
+            {
+                btnLisa.Enabled = false;
+                btnUuenda.Enabled = false;
+                btnKustuta.Enabled = false;
+            }
         }
 
         private void RefreshEverything()
@@ -48,14 +59,13 @@ namespace Pood_andmebaasiga
                 cmbKategooria.DataSource = dt;
                 cmbKategooria.DisplayMember = "Kategooria_nimetus";
                 cmbKategooria.ValueMember = "Id";
-                cmbKategooria.SelectedIndex = -1;
             }
             catch { }
         }
 
         private void btnOtsiPilt_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            OpenFileDialog ofd = new OpenFileDialog { Filter = "Images|*.jpg;*.png;*.jpeg" };
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 piltPath = ofd.FileName;
@@ -84,7 +94,7 @@ namespace Pood_andmebaasiga
 
         private void btnUuenda_Click(object sender, EventArgs e)
         {
-            if (dataGridViewTooded.SelectedRows.Count > 0 && cmbKategooria.SelectedValue != null)
+            if (dataGridViewTooded.SelectedRows.Count > 0)
             {
                 try
                 {
@@ -117,6 +127,7 @@ namespace Pood_andmebaasiga
             }
         }
 
+        // Логика добавления категории (теперь одна)
         private void btnLisaKat_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(txtUusKat.Text))
@@ -138,13 +149,13 @@ namespace Pood_andmebaasiga
                 txtNimetus.Text = dataGridViewTooded.Rows[e.RowIndex].Cells["Toodenimetus"].Value.ToString();
                 txtKogus.Text = dataGridViewTooded.Rows[e.RowIndex].Cells["Kogus"].Value.ToString();
                 txtHind.Text = dataGridViewTooded.Rows[e.RowIndex].Cells["Hind"].Value.ToString();
-
                 piltPath = dataGridViewTooded.Rows[e.RowIndex].Cells["Pilt"].Value.ToString();
                 if (File.Exists(piltPath)) picPilt.Image = Image.FromFile(piltPath);
                 else picPilt.Image = null;
             }
         }
 
+        // Переход в кассу (теперь один)
         private void btnAvaKassa_Click(object sender, EventArgs e)
         {
             Kassa kassaVorm = new Kassa();

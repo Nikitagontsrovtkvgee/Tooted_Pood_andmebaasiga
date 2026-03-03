@@ -11,24 +11,73 @@ namespace Pood_andmebaasiga
     public partial class Kassa : Form
     {
         SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Tooded.mdf;Integrated Security=True");
+        DataTable korvTable = new DataTable();
 
         public Kassa()
         {
             InitializeComponent();
-            LoadKassaData();
+            korvTable.Columns.Add("Id", typeof(int));
+            korvTable.Columns.Add("Toode");
+            korvTable.Columns.Add("Hind", typeof(double));
+            dataGridViewKorv.DataSource = korvTable;
+            LoadShop();
         }
 
-        private void LoadKassaData()
+        private void LoadShop()
         {
+            SqlDataAdapter adapter = new SqlDataAdapter("SELECT Id, Toodenimetus, Kogus, Hind FROM Tooded", connect);
             // Выбираем данные, включая путь к картинке (Pilt)
             SqlDataAdapter adapter = new SqlDataAdapter("SELECT Id, Toodenimetus, Hind, Pilt FROM Tooded", connect);
             DataTable dt = new DataTable();
             adapter.Fill(dt);
-            dataGridViewKassa.DataSource = dt;
+            dataGridViewShop.DataSource = dt;
+            dataGridViewShop.Columns["Id"].Visible = false;
+        }
+
+        private void btnLisaKorvi_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewShop.SelectedRows.Count > 0)
+            {
+                var row = dataGridViewShop.SelectedRows[0];
+                int id = (int)row.Cells["Id"].Value;
+                int laos = (int)row.Cells["Kogus"].Value;
+                if (laos > 0)
+                {
+                    korvTable.Rows.Add(id, row.Cells["Toodenimetus"].Value, row.Cells["Hind"].Value);
+                    UpdateStock(id, -1);
+                    LoadShop();
+                }
+            }
+        }
+
+        private void UpdateStock(int id, int change)
+        {
+            connect.Open();
+            SqlCommand cmd = new SqlCommand("UPDATE Tooded SET Kogus = Kogus + @change WHERE Id = @id", connect);
+            cmd.Parameters.AddWithValue("@change", change);
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.ExecuteNonQuery();
+            connect.Close();
         }
 
         private void btnOsta_Click(object sender, EventArgs e)
         {
+            if (korvTable.Rows.Count == 0) return;
+            Document doc = new Document();
+            string path = Path.Combine(Application.StartupPath, "tsekk.pdf");
+            PdfWriter.GetInstance(doc, new FileStream(path, FileMode.Create));
+            doc.Open();
+            doc.Add(new Paragraph("TSEKK - " + DateTime.Now));
+            double sum = 0;
+            foreach (DataRow r in korvTable.Rows)
+            {
+                doc.Add(new Paragraph($"{r["Toode"]} - {r["Hind"]} EUR"));
+                sum += Convert.ToDouble(r["Hind"]);
+            }
+            doc.Add(new Paragraph("KOKKU: " + sum + " EUR"));
+            doc.Close();
+            System.Diagnostics.Process.Start(path);
+            korvTable.Clear();
             if (dataGridViewKassa.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Vali toode tabelist!");

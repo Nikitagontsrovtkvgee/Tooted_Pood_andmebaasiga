@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 
@@ -6,7 +7,8 @@ namespace Pood_andmebaasiga
 {
     public partial class Login : Form
     {
-        readonly SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Tooded.mdf;Integrated Security=True");
+        // Строка подключения к твоей базе
+        SqlConnection connect = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Tooded.mdf;Integrated Security=True");
 
         public Login()
         {
@@ -15,15 +17,10 @@ namespace Pood_andmebaasiga
 
         private void btnLogiSisse_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtKasutaja.Text) || string.IsNullOrEmpty(txtParool.Text))
-            {
-                MessageBox.Show("Sisesta kasutajanimi ja parool!");
-                return;
-            }
-
             try
             {
                 connect.Open();
+                // Получаем роль (Roll) для проверки прав
                 SqlCommand cmd = new SqlCommand("SELECT Roll FROM Kasutajad WHERE Kasutajanimi=@nimi AND Parool=@parool", connect);
                 cmd.Parameters.AddWithValue("@nimi", txtKasutaja.Text);
                 cmd.Parameters.AddWithValue("@parool", txtParool.Text);
@@ -36,7 +33,8 @@ namespace Pood_andmebaasiga
                     string roll = result.ToString();
                     MessageBox.Show("Tere tulemast, " + roll + "!");
 
-                    Tooded peavorm = new Tooded(roll); // Передаем роль в конструктор
+                    // Передаем переменную roll в конструктор, как того требует Tooded.cs
+                    Tooded peavorm = new Tooded(roll);
                     peavorm.Show();
                     this.Hide();
                 }
@@ -45,7 +43,11 @@ namespace Pood_andmebaasiga
                     MessageBox.Show("Vale kasutajanimi või parool!");
                 }
             }
-            catch (Exception ex) { MessageBox.Show("Viga sisselogimisel: " + ex.Message); connect.Close(); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Viga sisselogimisel: " + ex.Message);
+                if (connect.State == ConnectionState.Open) connect.Close();
+            }
         }
     }
 }
