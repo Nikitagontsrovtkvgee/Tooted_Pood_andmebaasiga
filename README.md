@@ -37,6 +37,40 @@ If you want to avoid SSH altogether, clone using the HTTPS URL instead of SSH:
 
 ---
 
+## ❌ HTTPS clone error — "Git failed with a fatal error. Could not read from remote repository"
+
+If cloning via HTTPS gives this error even though the repository is **public**, the most common cause is **stale or incorrect GitHub credentials stored in Windows Credential Manager**.
+
+### Step-by-step fix
+
+1. Open **Windows Credential Manager**  
+   (Start → search "Credential Manager" → open **Windows Credentials** tab)
+
+2. Find any entries that mention **github.com**, for example:
+   - `git:https://github.com`
+   - `GitHub — https://github.com`
+
+3. Click each one → **Remove** (or **Edit** and clear the password)
+
+4. Return to Visual Studio and clone again:
+   ```
+   https://github.com/Nikitagontsrovtkvgee/Tooted_Pood_andmebaasiga.git
+   ```
+   Visual Studio will now ask you to sign in to GitHub — enter your credentials and the clone will succeed.
+
+### Alternative fix — re-authenticate directly in Visual Studio
+
+1. **File → Account Settings...**
+2. Click **Sign out** next to your GitHub account
+3. Click **Sign in** and authenticate with your GitHub username/password (or browser OAuth)
+4. Try cloning again
+
+### Why does this happen?
+
+When your GitHub password changes or your Personal Access Token expires, Windows keeps the old credentials cached. Even for **public** repositories, Visual Studio sends these cached credentials automatically; GitHub rejects them and Git reports a fatal error instead of silently skipping authentication.
+
+---
+
 ## 🛠️ Requirements
 
 - **Visual Studio 2022** (or 2019) with the **.NET desktop development** workload
@@ -62,11 +96,14 @@ Right-click the solution → **Restore NuGet Packages**
 
 ### 3. Set up the database
 
-The database file `Tooded.mdf` is included in the project and will be copied to `bin\Debug\` automatically on build.
+> **Note:** The `.mdf` database file is **not stored in git** (it is listed in `.gitignore` because binary database files should not be version-controlled). You must create it once, following these steps:
 
-**Create tables** by opening **Server Explorer** in Visual Studio:
-- View → Server Explorer → expand `Tooded.mdf` → right-click **Tables** → **New Query**
-- Run the SQL scripts from [README_SQL.md](README_SQL.md)
+1. Open **View → Server Explorer** in Visual Studio
+2. Right-click **Data Connections** → **Add Connection...**
+3. Choose **Microsoft SQL Server Database File** as the data source
+4. Click **New...** and save as `Tooded.mdf` inside the `Pood_andmebaasiga\` folder
+5. Right-click the new connection → **New Query**
+6. Run the SQL scripts from [README_SQL.md](README_SQL.md) to create all tables
 
 ### 4. Insert test users
 
