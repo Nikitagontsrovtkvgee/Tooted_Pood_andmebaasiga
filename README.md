@@ -4,70 +4,64 @@ Windows Forms (.NET Framework 4.7.2) project — shop management system with a L
 
 ---
 
-## ⚠️ Cloning problem — "Git for Windows" SSH dialog
+## ❌ Clone error — SSH dialog appears, then "Git failed with a fatal error"
 
-When cloning the repository for the first time, Visual Studio (Git for Windows) may show a dialog like this:
+**Symptoms (exactly what you see):**
+1. You paste the **HTTPS** URL into Visual Studio's Clone dialog
+2. An SSH host-key dialog appears asking you to confirm GitHub's fingerprint
+3. You click **OK** — and immediately get:  
+   > *Git failed with a fatal error. Could not read from remote repository.  
+   > Please make sure you have the correct access rights and the repository exists.*
+
+**Root cause — git URL rewrite (`insteadOf`):**  
+Your global git config contains a rule that silently converts every `https://github.com/` URL to `git@github.com:` (SSH) before git even starts the clone. So even though you pasted an HTTPS URL, git is actually connecting over SSH. Because no SSH key is configured for GitHub on this machine, authentication fails and you get the fatal error.
+
+### Fix 1 — Remove the URL rewrite from git config (recommended)
+
+Open **Developer PowerShell** or **Git Bash** and run:
+
+```powershell
+git config --global --unset url."git@github.com:".insteadOf
+```
+
+Then verify it is gone:
+
+```powershell
+git config --global --list | findstr insteadOf
+```
+
+The command should return nothing. Now clone again with the HTTPS URL:
 
 ```
-The authenticity of host 'github.com (140.82.121.4)' can't be established.
-ED25519 key fingerprint is SHA256:+DIY3wvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU.
-This key is not known by any other names.
+https://github.com/Nikitagontsrovtkvgee/Tooted_Pood_andmebaasiga.git
 ```
 
-**✅ Solution: Click "OK".**
+No SSH dialog will appear and the clone will succeed.
 
-This is a standard security prompt that appears when connecting to GitHub via SSH for the first time. Git is asking you to confirm that you trust GitHub's server. GitHub's official ED25519 fingerprint is:
+### Fix 2 — Turn off "Prefer SSH" in Visual Studio
 
-```
-SHA256:+DiY3wvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU
-```
+Visual Studio has a built-in setting that rewrites HTTPS URLs to SSH:
 
-This matches — so it is safe to click **OK**.
+1. Go to **Tools → Options → Source Control → Git Global Settings**
+2. Find **"Prefer SSH to HTTPS"** — set it to **False**
+3. Click **OK**, then try cloning again
 
-### Alternative: Clone via HTTPS (no SSH dialog)
+### Fix 3 — Use SSH properly (if you want to keep SSH)
 
-If you want to avoid SSH altogether, clone using the HTTPS URL instead of SSH:
+If you intentionally use SSH and have an SSH key, the host-key dialog is safe — just click **OK**. The fingerprint GitHub shows (`SHA256:+DiY3wvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU`) is GitHub's official ED25519 key, so it is legitimate.
 
-1. In Visual Studio: **Git → Clone Repository...**
-2. Paste the HTTPS URL:
+The fatal error in this case means your SSH key is **not added to your GitHub account**. Fix it by:
+
+1. Generate a key if you don't have one:  
+   ```powershell
+   ssh-keygen -t ed25519 -C "your@email.com"
    ```
-   https://github.com/Nikitagontsrovtkvgee/Tooted_Pood_andmebaasiga.git
+2. Copy the public key:  
+   ```powershell
+   cat ~/.ssh/id_ed25519.pub
    ```
-3. Choose a local folder and click **Clone** — no SSH key dialog will appear.
-
----
-
-## ❌ HTTPS clone error — "Git failed with a fatal error. Could not read from remote repository"
-
-If cloning via HTTPS gives this error even though the repository is **public**, the most common cause is **stale or incorrect GitHub credentials stored in Windows Credential Manager**.
-
-### Step-by-step fix
-
-1. Open **Windows Credential Manager**  
-   (Start → search "Credential Manager" → open **Windows Credentials** tab)
-
-2. Find any entries that mention **github.com**, for example:
-   - `git:https://github.com`
-   - `GitHub — https://github.com`
-
-3. Click each one → **Remove** (or **Edit** and clear the password)
-
-4. Return to Visual Studio and clone again:
-   ```
-   https://github.com/Nikitagontsrovtkvgee/Tooted_Pood_andmebaasiga.git
-   ```
-   Visual Studio will now ask you to sign in to GitHub — enter your credentials and the clone will succeed.
-
-### Alternative fix — re-authenticate directly in Visual Studio
-
-1. **File → Account Settings...**
-2. Click **Sign out** next to your GitHub account
-3. Click **Sign in** and authenticate with your GitHub username/password (or browser OAuth)
-4. Try cloning again
-
-### Why does this happen?
-
-When your GitHub password changes or your Personal Access Token expires, Windows keeps the old credentials cached. Even for **public** repositories, Visual Studio sends these cached credentials automatically; GitHub rejects them and Git reports a fatal error instead of silently skipping authentication.
+3. Go to **github.com → Settings → SSH and GPG keys → New SSH key** and paste it
+4. Test: `ssh -T git@github.com` — you should see *"Hi username! You've successfully authenticated"*
 
 ---
 
@@ -140,7 +134,7 @@ Pood_andmebaasiga/
  ├─ Kassa.cs              ← shop / cash register (buyer view)
  ├─ AdminPanel.cs         ← user management
  ├─ Kliendid.cs           ← client card management
- ├─ Tooded.mdf            ← LocalDB database
+ ├─ Tooded.mdf            ← LocalDB database (created locally, not in git)
  └─ Images/               ← sample product images
 ```
 
