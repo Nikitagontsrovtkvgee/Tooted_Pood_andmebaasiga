@@ -69,11 +69,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminPanel.Designer.cs">
+      <DependentUpon>AdminPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Kassa.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Kassa.Designer.cs">
       <DependentUpon>Kassa.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Kliendid.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Kliendid.Designer.cs">
+      <DependentUpon>Kliendid.cs</DependentUpon>
     </Compile>
     <Compile Include="Login.cs">
       <SubType>Form</SubType>
@@ -87,10 +99,22 @@
     <Compile Include="Tooded.Designer.cs">
       <DependentUpon>Tooded.cs</DependentUpon>
     </Compile>
+    <Compile Include="Register.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Register.Designer.cs">
+      <DependentUpon>Register.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AdminPanel.resx">
+      <DependentUpon>AdminPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Kassa.resx">
       <DependentUpon>Kassa.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Kliendid.resx">
+      <DependentUpon>Kliendid.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
@@ -104,6 +128,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Register.resx">
+      <DependentUpon>Register.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Tooded.resx">
       <DependentUpon>Tooded.cs</DependentUpon>
     </EmbeddedResource>
